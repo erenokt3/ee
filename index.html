@@ -59,13 +59,18 @@
             transition: 0.3s;
         }
         button:hover { background-color: #d7ccc8; }
+
+        /* Spotify embed player */
+        #spotifyPlayer {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
-
-    <audio id="bgMusic" loop>
-        <source src="https://open.spotify.com/intl-tr/track/5rZM6T0xlVUNjtPzukVbSj?si=6ad142a596c54cde" type="audio/mpeg">
-        </audio>
 
     <div id="ui">🇹🇷 Düşman Kaybı: <span id="score">0</span></div>
     <canvas id="gameCanvas"></canvas>
@@ -84,6 +89,11 @@
         <button onclick="restartGame()">YENİDEN DİRİLİŞ</button>
     </div>
 
+    <!-- Spotify Embed -->
+    <div id="spotifyPlayer">
+        <iframe src="https://open.spotify.com/embed/track/5rZM6T0xlVUNjtPzukVbSj" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+    </div>
+
 <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -91,7 +101,7 @@
     const finalScoreEl = document.getElementById('finalScore');
     const startScreen = document.getElementById('startScreen');
     const gameOverScreen = document.getElementById('gameOverScreen');
-    const bgMusic = document.getElementById('bgMusic');
+    const spotifyPlayer = document.getElementById('spotifyPlayer');
 
     canvas.width = window.innerWidth - 20;
     canvas.height = window.innerHeight - 20;
@@ -100,7 +110,6 @@
     let gameRunning = false;
     let animationId;
 
-    // --- ÇİZİMLER ---
     function drawTurkAskeri(ctx, x, y, radius, angle) {
         ctx.save();
         ctx.translate(x, y);
@@ -254,19 +263,10 @@
         gameRunning = true;
         score = 0;
         scoreEl.innerText = score;
-        
-        // --- MÜZİK ÇALMA KISMI ---
-        bgMusic.volume = 0.5; // Ses seviyesi %50
-        var playPromise = bgMusic.play();
-        
-        if (playPromise !== undefined) {
-            playPromise.then(_ => {
-                // Otomatik oynatma başladı
-            }).catch(error => {
-                console.log("Müzik hatası: Link geçerli bir ses dosyası değil veya tarayıcı engelledi.");
-            });
-        }
-        
+
+        // Spotify oynatıcıyı göster
+        spotifyPlayer.style.display = 'block';
+
         animate();
         spawnEnemies();
     }
@@ -277,8 +277,7 @@
         clearInterval(enemySpawnInterval);
         gameOverScreen.style.display = 'block';
         finalScoreEl.innerText = score;
-        bgMusic.pause();
-        bgMusic.currentTime = 0; 
+        spotifyPlayer.style.display = 'none';
     }
 
     function restartGame() {
@@ -296,3 +295,4 @@
 </script>
 </body>
 </html>
+
